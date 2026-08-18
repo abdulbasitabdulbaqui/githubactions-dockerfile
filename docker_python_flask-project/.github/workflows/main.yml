@@ -3,7 +3,7 @@ name: Docker CI/CD
 on:
   push:
     branches:
-      - main
+      - master
 
 jobs:
   build-and-deploy:
@@ -23,12 +23,15 @@ jobs:
       - name: Login to ECR
         run: |
           aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 965745962916.dkr.ecr.us-east-1.amazonaws.com
+
       - name: Build Docker image
         run: |
           docker build -t img1 .
+
       - name: Tag Docker image
         run: |
           docker tag img1:latest 965745962916.dkr.ecr.us-east-1.amazonaws.com/img1:latest
+
       - name: Push image to ECR
         run: |
           docker push 965745962916.dkr.ecr.us-east-1.amazonaws.com/img1:latest
@@ -37,13 +40,11 @@ jobs:
         uses: appleboy/ssh-action@v1.2.2
         with:
           host: 3.80.42.67
-          username: amazon linux 2023
+          username: ec2-user
           key: ${{ secrets.EC2_SSH_KEY }}
-
           script: |
-
             # Login to ECR
-           aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 965745962916.dkr.ecr.us-east-1.amazonaws.com
+            aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 965745962916.dkr.ecr.us-east-1.amazonaws.com
 
             # Pull latest image
             docker pull 965745962916.dkr.ecr.us-east-1.amazonaws.com/img1:latest
