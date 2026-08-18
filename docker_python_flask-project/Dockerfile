@@ -1,8 +1,12 @@
-FROM python:3.6
-COPY . /app
+FROM python:3.11-slim
+
 WORKDIR /app
-RUN apt-get update && apt-get install -y python3 python3-pip && pip3 install --no-cache-dir --break-system-packages -r requirements.txt
+
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY . .
+
 EXPOSE 5000
-#ENTRYPOINT ["python"]
-#CMD ["app.py"]
+
 CMD ["python", "app.py"]
